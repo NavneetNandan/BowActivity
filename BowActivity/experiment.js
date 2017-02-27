@@ -30,202 +30,82 @@ var myRight;            /* Right */
 var myLeft;             /* Left */
 
 /* Ball variables */
-var myBall;             /* Ball Object */
+var arrow;             /* Ball Object */
 var myBallRadius;       /* Radius */
-var myBallX;            /* X Position */
-var myBallY;            /* Y Position */
-var myBallVX;           /* X Velocity */
-var myBallVY;           /* Y Velocity */
-var myBallAX;           /* X Acceleration */
-var myBallAY;           /* Y Acceleration */
-var myBallZ;            /* Z Position for placing ball */
+var arrowX;            /* X Position */
+var arrowY;            /* Y Position */
+var arrowVX;           /* X Velocity */
+var arrowVY;           /* Y Velocity */
+var arrowAX;           /* X Acceleration */
+var arrowAY;           /* Y Acceleration */
+var arrowZ;            /* Z Position for placing ball */
 
 /* Parameters, Variables */
 var gravityX;           /* X component of Gravity in m/S2 */
 var gravityY;           /* Y component of Gravity in m/S2 */
-
-/******************* Interaction func tions ***********************/
-
-/**
- * This function implements custom dragging of the ball.
- * <p>
- * It ensures that the ball is not dragged beyond the permissible boundaries.
- * In other applications you can move more than one element as well.
- * <p>
- * @param element    Pointer to ball object
- * @param newpos     New 3D position (THREE.Vector3)
- */
 var geometry;
 var line;
 var lineMaterial;
 var bow;
 var stretched;
-function updateInitialVelocity() {
-    scaled_x = ((1.4 - myBallX) / 0.26) * 10;
-    // console.log(7+scaled_x*1.5);
-    var newVelocity = (7 + scaled_x * 1.5) / (arrowMass / 4);
-    console.log(newVelocity);
-    handleVX(newVelocity);
-}
-function myBallDrag(element, newpos)
+var arrowMass;
+
+function myArrowDrag(element, newpos)
 {
     stretched=true;
     console.log(line.geometry.vertices[2].x);
     PIEscene.remove(line);
     var geometry1=new THREE.Geometry();
-    geometry1.vertices.push(new THREE.Vector3(1-0.1,0.7,myBallZ));
-    geometry1.vertices.push(new THREE.Vector3(newpos.x-0.65,1.5,myBallZ));
-    geometry1.vertices.push(new THREE.Vector3(1-0.1,2.3,myBallZ));
+    geometry1.vertices.push(new THREE.Vector3(1-0.1,0.7,arrowZ));
+    geometry1.vertices.push(new THREE.Vector3(newpos.x-0.65,1.5,arrowZ));
+    geometry1.vertices.push(new THREE.Vector3(1-0.1,2.3,arrowZ));
     line = new THREE.Line(geometry1, lineMaterial);
     // PIErender();
-    myBallX = newpos.x;
+    arrowX = newpos.x;
     // console.log(newpos.x);
-    if (newpos.x < 1.14) { myBallX = 1.14;geometry1.vertices[1].x=1.14-0.65}
+    if (newpos.x < 1.14) { arrowX = 1.14;geometry1.vertices[1].x=1.14-0.65}
 
-    else if (newpos.x > 1.4) { myBallX = 1.4;geometry1.vertices[1].x=1.4-0.65 }
+    else if (newpos.x > 1.4) { arrowX = 1.4;geometry1.vertices[1].x=1.4-0.65 }
     updateInitialVelocity();
-    myBall.position.set(myBallX, myBallY, myBallZ);
+    arrow.position.set(arrowX, arrowY, arrowZ);
     PIEaddElement(line);
 
+}
+
+function inArray(value, array) {
+    for (var i = 0; i < array.length; i++) {
+        if (value == array[i])
+            return true;
+    }
+    return false;
+}
+
+function updateInitialVelocity() {
+    scaled_x = ((1.4 - arrowX) / 0.26) * 10;
+    // console.log(7+scaled_x*1.5);
+    var newVelocity = (7 + scaled_x * 1.5) / (arrowMass / 4);
+    handleVX(newVelocity);
 }
 /******************* End of Interaction functions ***********************/
 
 /******************* GUI control objects code ***********************/
-var PosX;           /* X Position Slider Label */
-var PosY;           /* Y Position Slider Label */
-var VelX;           /* X Velocity Slider Label */
-var VelY;           /* Y Velocity Slider Label */
-var AccY;           /* Y Acceleration Slider Label */
-var Xdefault;       /* X Position Slider Default Value */
-var Ydefault;       /* Y Position Slider Default Value */
-var VXdefault;      /* X Velocity Slider Default Value */
-var VYdefault;      /* Y Velocity Slider Default Value */
-var AYdefault;      /* Y Acceleration Slider Default Value */
-var Xmin;           /* X Position Slider Minimum Value */
-var Xmax;           /* X Position Slider Maximum Value */
-var Ymin;           /* Y Position Slider Minimum Value */
-var Ymax;           /* Y Position Slider Maximum Value */
-var VXmin;          /* X Velocity Slider Minimum Value */
-var VXmax;          /* X Velocity Slider Maximum Value */
-var VYmin;          /* Y Velocity Slider Minimum Value */
-var VYmax;          /* Y Velocity Slider Maximum Value */
-var AYmin;          /* Y Acceleration Slider Minimum Value */
-var AYmax;          /* Y Acceleration Slider Maximum Value */
-var Xstep;          /* X Position Slider Step */
-var Ystep;          /* Y Position Slider Step */
-var VXstep;         /* X Velocity Slider Step */
-var VYstep;         /* Y Velocity Slider Step */
-var AYstep;         /* Y Acceleration Slider Step */
-var arrowMass;
-/*
- * This function handles the X position slider change
- * <p>
- * Updates the myBall position variable.
- * Effect is felt immediately.
- * <p>
- * @param newValue       New Value of the slider
- */
-function handleX(newValue)
-{
-    myBallX = newValue;
-    myBall.position.set(myBallX, myBallY, myBallZ);
-    PIErender();
-}
 
 function handleArrowMass(newValue){
     arrowMass=newValue;
-    myBall.scale.z=0.9+(newValue-4)/40;
-    PIErender();
-}
-/*
- * This function handles the Y position slider change
- * <p>
- * Updates the myBall position variable.
- * Effect is felt immediately.
- * <p>
- * @param newValue       New Value of the slider
- */
-function handleY(newValue)
-{
-    myBallY = newValue;
-    myBall.position.set(myBallX, myBallY, myBallZ);
+    arrow.scale.z=0.9+(newValue-4)/40;
     PIErender();
 }
 
-/*
- * This function handles the X Velocity slider change
- * <p>
- * Updates the myBall velocity variable.
- * Effect is felt from the next animation frame.
- * <p>
- * @param newValue       New Value of the slider
- */
 function handleVX(newValue)
 {
-    myBallVX = newValue;
+    arrowVX = newValue;
 }
 
-/*
- * This function handles the Y Velocity slider change
- * <p>
- * Updates the myBall velocity variable.
- * Effect is felt from the next animation frame.
- * <p>
- * @param newValue       New Value of the slider
- */
-function handleVY(newValue)
-{
-    myBallVY = newValue;
-}
-
-/*
- * This function handles the Y acceleration (gravity) slider change
- * <p>
- * Updates the myBall acceleration variable.
- * Effect is felt from the next animation frame.
- * <p>
- * @param newValue       New Value of the slider
- */
-function handleAY(newValue)
-{
-    myBallAY = newValue;
-}
 
 function initialiseControlVariables()
 {
     /* Labels */
 
-    PosX="X";                  /* X Position Slider Label */
-    PosY="Y";                  /* Y Position Slider Label */
-    VelX="VX";                 /* X Velocity Slider Label */
-    VelY="VY";                 /* Y Velocity Slider Label */
-    AccY="AY";                 /* Y Acceleration Slider Label */
-
-    /* Default (initial) Values */
-    Xdefault=myCenterX;        /* X Position Slider Default Value */
-    Ydefault=myCenterY;        /* Y Position Slider Default Value */
-    VXdefault=0.1;             /* X Velocity Slider Default Value */
-    VYdefault=0.1;             /* Y Velocity Slider Default Value */
-    AYdefault=-9.8;            /* Y Acceleration Slider Default Value */
-
-    /* Slider Limits */
-    Xmin=leftB+myBallRadius;   /* X Position Slider Minimum Value */
-    Xmax=rightB-myBallRadius;  /* X Position Slider Maximum Value */
-    Ymin=bottomB+myBallRadius; /* Y Position Slider Minimum Value */
-    Ymax=topB-myBallRadius;    /* Y Position Slider Maximum Value */
-    VXmin=-1.0;                /* X Velocity Slider Minimum Value */
-    VXmax= 1.0;                /* X Velocity Slider Maximum Value */
-    VYmin=-1.0;                /* Y Velocity Slider Minimum Value */
-    VYmax= 1.0;                /* Y Velocity Slider Maximum Value */
-    AYmin=-15.0;               /* Y Acceleration Slider Maximum Value */
-    AYmax= 0.0;                /* Y Acceleration Slider Minimum Value */
-
-    /* Slider Steps */
-    Xstep=0.1;                 /* X Position Slider Step */
-    Ystep=0.1;                  /* Y Position Slider Step */
-    VXstep=0.1;                 /* X Velocity Slider Step */
-    VYstep=0.1;                 /* Y Velocity Slider Step */
-    AYstep=-0.1;               /* Y Acceleration Slider Step */
 }
 
 
@@ -247,38 +127,15 @@ var helpContent;
 function initialiseHelp()
 {
     helpContent="";
-    helpContent = helpContent + "<h2>Bouncing Ball experiment help</h2>";
+    helpContent = helpContent + "<h2</h2>";
     helpContent = helpContent + "<h3>About the experiment</h3>";
-    helpContent = helpContent + "<p>The experiment shws a bouncing ball constrained by left, right, top and bottom walls.</p>";
+    helpContent = helpContent + "<p>The experiment shows a bow and arrow. User can vary stretch of string of bow and mass of arrow and observe the distance covered by arrow</p>";
     helpContent = helpContent + "<h3>Animation control</h3>";
-    helpContent = helpContent + "<p>The top line has animation controls. There are two states of the experiment.</p>";
-    helpContent = helpContent + "<h3>The setup stage</h3>";
-    helpContent = helpContent + "<p>The initial state is setup stage. In this stage, you can see a control window at the right. You have access to five sliders.</p>";
-    helpContent = helpContent + "<p>You can control the following:</p>";
-    helpContent = helpContent + "<ul>";
-    helpContent = helpContent + "<li>X&nbsp;&nbsp;:&nbsp;Controls the X position of the ball.</li>";
-    helpContent = helpContent + "<li>Y&nbsp;&nbsp;:&nbsp;Controls the Y position of the ball.</li>";
-    helpContent = helpContent + "<li>VX&nbsp;:&nbsp;Controls the X velocity of the ball.</li>";
-    helpContent = helpContent + "<li>VY&nbsp;:&nbsp;Controls the Y velocity of the ball.</li>";
-    helpContent = helpContent + "<li>AY&nbsp;:&nbsp;Controls the Y acceleration of the ball.</li>";
-    helpContent = helpContent + "</ul>";
-    helpContent = helpContent + "<p>You also have an additional text input to control the coefficient of restitution of the bottom floor.</p>";
-    helpContent = helpContent + "<p>Once you setup the experiment, you can enter the animation stage by clicking the start button</p>";
-    helpContent = helpContent + "<h3>The animation stage</h3>";
-    helpContent = helpContent + "<p>In the animation stage, the ball will bounce around obeyng the laws of physics.</p>";
-    helpContent = helpContent + "<p>The right hand panel now shows the values of the four experiment variables during animation.</p>";
-    helpContent = helpContent + "<ul>";
-    helpContent = helpContent + "<li>X&nbsp;&nbsp;:&nbsp;Shows the X position of the ball.</li>";
-    helpContent = helpContent + "<li>Y&nbsp;&nbsp;:&nbsp;Shows the Y position of the ball.</li>";
-    helpContent = helpContent + "<li>VX&nbsp;:&nbsp;Shows the X velocity of the ball.</li>";
-    helpContent = helpContent + "<li>VY&nbsp;:&nbsp;Shows the Y velocity of the ball.</li>";
-    helpContent = helpContent + "</ul>";
-    helpContent = helpContent + "<p>In addition you will also see two sliders showing potential and kinetic energy.</p>";
-    helpContent = helpContent + "<p>You can pause and resume the animation by using the pause/play nutton on the top line</p>";
-    helpContent = helpContent + "<p>You can slow down and speed up the animaion by uing the speed control buttons</p>";
-    helpContent = helpContent + "<h3>The drag and drop</h3>";
-    helpContent = helpContent + "<p>You can also position the ball by dragging and dropping it. You can only do this in the setup stage. This has been prevented in the animation stage.</p>";
-    helpContent = helpContent + "<h2>Happy Experimenting</h2>";
+    helpContent = helpContent + "<p>The top line has animation controls. There are two controls in the experiment.</p>";
+    helpContent = helpContent + "<h3>Mass Control</h3>";
+    helpContent = helpContent + "<p>From the controls panel in the top right corner you can vary the mass of arrow between the scale of 4 to 20 </p>";
+    helpContent = helpContent + "<h3>Stretch Control</h3>";
+    helpContent = helpContent + "<p>To stretch the string of bow and increase the tension move the pointer near arrow and string connection point. Then mouse pointer would turn into a hand, now you can can stretch the string by dragging arrow leftwards. When you end the drag arrrow would fire.  </p>";
     PIEupdateHelp(helpContent);
 }
 
@@ -286,24 +143,8 @@ var infoContent;
 function initialiseInfo()
 {
     infoContent =  "";
-    infoContent = infoContent + "<h2>Bouncing Ball experiment concepts</h2>";
     infoContent = infoContent + "<h3>About the experiment</h3>";
-    infoContent = infoContent + "<p>The experiment shws a bouncing ball constrained by left, right, top and bottom walls.</p>";
-    infoContent = infoContent + "<h3>Collision</h3>";
-    infoContent = infoContent + "<p>When an object collides with a surface, the direction of velocity normal to the surface is reversed.</p>";
-    infoContent = infoContent + "<p>At the time of impact, the ball is deformed because of the force of the wall. This deformation can be easily observed with a sponge ball. If you drop a ball of dough on the floor, it does not bounce, it is only deformed.</p>";
-    infoContent = infoContent + "<p>The harder balls are also deformed. But because of the hard nature of the meterial, the hard ball tries to regain it's shape. This attempt to reain the shape reverses the velocity by pushing aainst the wall.</p>";
-    infoContent = infoContent + "<p>When the ball collides with the left or the right wall, the velocity in the X direction reverses while the velocity in the Y direction reamains the same.</p>";
-    infoContent = infoContent + "<p>When the ball collides with the top or the bottom wall, the velocity in the Y direction reverses while the velocity in the Y direction reamains the same.</p>";
-    infoContent = infoContent + "<h3>The coefficient of restitution</h3>";
-    infoContent = infoContent + "<p>When the velocity reverses direction, it is not necessary that it's magnitude remains the same.</p>";
-    infoContent = infoContent + "<p>The ball may not retain it's original shape and texture. The cricket ball loses it's shine.</p>";
-    infoContent = infoContent + "<p>Some of the energy is lost because of the deformation of the ball. The energy loss means that the kinetic energy of the ball will be reduced after impact.</p>";
-    infoContent = infoContent + "<p>The coefficient of restitution specifies how much of the velocity will be retained after impact.</p>";
-    infoContent = infoContent + "<p>The coefficient of restitution does not affect te velocity in the direction parallel to the impact.</p>";
-    infoContent = infoContent + "<p>When the ball collides with the left or the right wall, the magnitude of the velocity in the X direction will reduce as per the coefficient of restitution. The magnitude and sign in Y direction remains the same.</p>";
-    infoContent = infoContent + "<p>When the ball collides with the top or the bottom wall, the magnitude of the velocity in the Y direction will reduce as per the coefficient of restitution. The magnitude and sign in X direction remains the same.</p>";
-    infoContent = infoContent + "<h2>Happy Experimenting</h2>";
+    infoContent = infoContent + "<p>The experiment shows a bow and arrow. User can vary stretch of string of bow and mass of arrow and observe the distance covered by arrow. </p>";
     PIEupdateInfo(infoContent);
 }
 
@@ -318,7 +159,7 @@ function initialiseScene()
     mySceneH   = (mySceneTLY - mySceneBRY);
     myCenterX  = (mySceneTLX + mySceneBRX) / 2.0;
     myCenterY  = (mySceneTLY + mySceneBRY) / 2.0;
-    myBallZ    = -2.0;
+    arrowZ    = -2.0;
 }
 
 function initialiseOtherVariables()
@@ -339,14 +180,13 @@ function initialiseOtherVariables()
 }
 
 function resetstretch() {
-    console.log("a");
     if(stretched) {
         PIEstartAnimation();
         PIEscene.remove(line);
         var geometry1=new THREE.Geometry();
-        geometry1.vertices.push(new THREE.Vector3(1-0.1,0.7,myBallZ));
-        geometry1.vertices.push(new THREE.Vector3(0.9,1.5,myBallZ));
-        geometry1.vertices.push(new THREE.Vector3(1-0.1,2.3,myBallZ));
+        geometry1.vertices.push(new THREE.Vector3(1-0.1,0.7,arrowZ));
+        geometry1.vertices.push(new THREE.Vector3(0.9,1.5,arrowZ));
+        geometry1.vertices.push(new THREE.Vector3(1-0.1,2.3,arrowZ));
         line = new THREE.Line(geometry1, lineMaterial);
         PIEaddElement(line);
 
@@ -396,8 +236,8 @@ var material;
 var loader;
 var texture;
 
-    PIEsetExperimentTitle("Experiment Name");
-    PIEsetDeveloperName("Avinash Awate");
+    PIEsetExperimentTitle("9.11.8D Potential energy - elasticity");
+    PIEsetDeveloperName("Navneet Nandan");
     PIEhideControlElement();
     loader = new THREE.ObjectLoader();
 
@@ -410,55 +250,42 @@ var texture;
 
     /* initialise Other Variables */
     initialiseOtherVariables();
-    loader.load("sg-bow-1.json",function (obj) {
+    loader.load("https://github.com/NavneetNandan/BowActivity/raw/master/BowActivity/sg-bow-1.json",function (obj) {
         bow=obj;
         bow.scale.x = 0.0009;
         bow.scale.y = 0.0009;
         bow.scale.z = 0.0009;
-        bow.position.set(1,myBallY,myBallZ);
+        bow.position.set(1,arrowY,arrowZ);
         bow.rotation.x= 1.4*Math.PI / 4;
         bow.rotation.y= 2*Math.PI / 4;
         bow.rotation.z= 0.5*Math.PI / 4;
         PIEaddElement(obj);
-        lineMaterial = new THREE.MeshBasicMaterial({
-            color: 0x00ff00
-        });
-        geometry = new THREE.Geometry();
-
-        geometry.vertices.push(new THREE.Vector3(0.9,0.7,myBallZ));
-        geometry.vertices.push(new THREE.Vector3(0.75,1.5,myBallZ));
-        geometry.vertices.push(new THREE.Vector3(0.9,2.3,myBallZ));
-
-
-        line = new THREE.Line(geometry, lineMaterial);
-        line.geometry.dynamic = true;
-        PIEaddElement(line);
         PIErender();
         // PIEstartButton.addEventListener()
 
     });
     PIErenderer.domElement.addEventListener("mouseup", resetstretch, false);
-    loader.load("sun-dial-arrow.json",function (obj) {
-        obj=obj.children[0];
-        obj.scale.x = 0.6;
-        obj.scale.y = 0.6;
-        obj.scale.z = 0.9;
-        obj.position.set(1.4,myBallY,myBallZ);
-        obj.rotation.x= Math.PI/2 ;
+    loader.load("https://raw.githubusercontent.com/NavneetNandan/BowActivity/master/BowActivity/sun-dial-arrow.json",function (obj) {
+        arrow=obj.children[0];
+        // arrow.material.color.setHex(0x5a5a5a);
+        arrow.scale.x = 0.6;
+        arrow.scale.y = 0.6;
+        arrow.scale.z = 0.9;
+        arrow.position.set(1.4,arrowY,arrowZ);
+        arrow.rotation.x= Math.PI/2 ;
         // obj.rotation.y= Math.PI / 4;
-        obj.rotation.z= Math.PI/2 ;
-        myBall=obj;
-        PIEaddElement(myBall);
-        PIEdragElement(myBall);
-        PIEsetDrag(myBall, myBallDrag);
+        arrow.rotation.z= Math.PI/2 ;
+        PIEaddElement(arrow);
+        PIEdragElement(arrow);
+        PIEsetDrag(arrow, myArrowDrag);
         PIErender();
     });
     /* Create Ball and add it to scene */
-    // myBall = new THREE.Mesh(new THREE.SphereGeometry(myBallRadius, 32, 32), new THREE.MeshLambertMaterial({color:0xededed}));
-    // myBall.position.set(myBallX, myBallY, myBallZ);
-    // myBall.castShadow = true;
-    // myBall.receiveShadow = true;
-    // PIEaddElement(myBall);
+    // arrow = new THREE.Mesh(new THREE.SphereGeometry(myBallRadius, 32, 32), new THREE.MeshLambertMaterial({color:0xededed}));
+    // arrow.position.set(arrowX, arrowY, myBallZ);
+    // arrow.castShadow = true;
+    // arrow.receiveShadow = true;
+    // PIEaddElement(arrow);
     /* Allow Dragging of the ball */
 
 
@@ -473,7 +300,7 @@ var texture;
     // material = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture } );
     // geometry = new THREE.PlaneBufferGeometry( mySceneW * 2, backB * 2 );
     geometry = new THREE.BoxGeometry( mySceneW * 2, wallThickness, 100);
-    material = new THREE.MeshLambertMaterial( {color: 0xaaaaaa} );
+    material = new THREE.MeshLambertMaterial( {color: 0x101010} );
     myFloor  = new THREE.Mesh( geometry, material );
     // myFloor.lookAt(new THREE.Vector3(0,1,0));
     myFloor.position.set(myCenterX, bottomB - (wallThickness / 2), 0.0);
@@ -481,7 +308,7 @@ var texture;
     PIEaddElement(myFloor);
     /* Ceiling */
     geometry = new THREE.BoxGeometry( mySceneW * 2, wallThickness, 100 );
-    material = new THREE.MeshLambertMaterial( {color: 0xffffff} );
+    material = new THREE.MeshLambertMaterial( {color: 0xeeeeee} );
     myCeiling = new THREE.Mesh( geometry, material );
     myCeiling.position.set(myCenterX, topB+(wallThickness/2), 0.0);
     myFloor.receiveShadow = true;
@@ -504,19 +331,20 @@ var texture;
     // material = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture } );
     // geometry = new THREE.PlaneBufferGeometry( mySceneW * 2, mySceneH * 2 );
     geometry = new THREE.BoxGeometry( mySceneW * 2, mySceneH * 2, wallThickness );
-    material = new THREE.MeshLambertMaterial( {color: 0x0000aa} );
+    material = new THREE.MeshLambertMaterial( {color: 0x0000ff} );
     myBack = new THREE.Mesh( geometry, material );
     myBack.position.set(myCenterX, myCenterY, backB - (wallThickness / 2));
     myBack.receiveShadow = true;
     PIEaddElement(myBack);
     /* Instantiate experiment controls */
     initialiseControls();
-
+    document.getElementById('start').remove();
     /* Reset all positions */
-    // resetExperiment();
 
     PIEsetAreaOfInterest(mySceneTLX, mySceneTLY, mySceneBRX, mySceneBRY);
-    document.getElementById('reset').click();
+    resetExperiment();
+
+    // document.getElementById('reset').click();
 
 }
 
@@ -537,18 +365,34 @@ function resetExperiment()
 {
     /* initialise Other Variables */
     initialiseOtherVariables();
-
+    stretched=false;
     /* Initialise Ball variables */
-    myBallX      = myCenterX;
-    myBallY      = myCenterY;
-    myBallVX     = 7.0;
+    arrowX      = myCenterX;
+    arrowY      = myCenterY;
+    arrowVX     = 7.0/ (arrowMass / 4);
     // updateInitialVelocity();
-    myBallVY     = 0.0;
-    myBallAX     = gravityX;
-    myBallAY     = gravityY;
+    arrowVY     = 0.0;
+    arrowAX     = gravityX;
+    arrowAY     = gravityY;
 
     /* Reset Ball position */
-    // myBall.position.set(myBallX, myBallY, myBallZ);
+    // arrow.position.set(arrowX, arrowY, myBallZ);
+    lineMaterial = new THREE.MeshBasicMaterial({
+        color: 0x00ff00
+    });
+    geometry = new THREE.Geometry();
+    if(inArray(line,PIEsceneElements)){
+        PIEscene.remove(line);
+    }
+    if(arrow!=null) {
+        arrow.position.set(1.4, arrowY, arrowZ);
+    }
+    geometry.vertices.push(new THREE.Vector3(0.9,0.7,arrowZ));
+    geometry.vertices.push(new THREE.Vector3(0.75,1.5,arrowZ));
+    geometry.vertices.push(new THREE.Vector3(0.9,2.3,arrowZ));
+    line = new THREE.Line(geometry, lineMaterial);
+    line.geometry.dynamic = true;
+    PIEaddElement(line);
 
     /* Reset Wall position */
     /* Floor */
@@ -598,44 +442,45 @@ var boundaryT;      /* Boundary Event Time */
 var tempT;          /* Temporary time */
 
     /* Load Ball coordinates */
-    myBallX = myBall.position.x;
-    myBallY = myBall.position.y;
-    myBallZ = myBall.position.z;
-
+    arrowX = arrow.position.x;
+    arrowY = arrow.position.y;
+    arrowZ = arrow.position.z;
+    var arrowLengthBy2=0.75;
+    var arrowHeightBy2=0.1;
     /* Intialise for boundary detection */
     changeX   = 1;
     changeY   = 1;
     boundaryT = dt / 1000.0;    /* convert to seconds */
 
-    /* Compute new myBall position and check for boundary event */
-    newX = myBallX + myBallVX * boundaryT + 0.5 * myBallAX * boundaryT * boundaryT;
-    if ((newX >= (rightB - myBallRadius)) || (newX <= (leftB + myBallRadius)))
+    /* Compute new arrow position and check for boundary event */
+    newX = arrowX + arrowVX * boundaryT + 0.5 * arrowAX * boundaryT * boundaryT;
+    if ((newX >= (rightB - arrowLengthBy2)) || (newX <= (leftB + arrowLengthBy2)))
     {   /* X boundary violated */
-	if (newX >= (rightB - myBallRadius))
+	if (newX >= (rightB - arrowLengthBy2))
         {   /* Ball hits right */
-            if (myBallAX == 0) { tempT = ((rightB - myBallRadius) - myBallX) / myBallVX; }
-            else { tempT = (Math.sqrt(myBallVX * myBallVX + 2 * myBallAX * ((rightB - myBallRadius) - myBallX)) - myBallVX) / myBallAX; }
+            if (arrowAX == 0) { tempT = ((rightB - arrowLengthBy2) - arrowX) / arrowVX; }
+            else { tempT = (Math.sqrt(arrowVX * arrowVX + 2 * arrowAX * ((rightB - arrowLengthBy2) - arrowX)) - arrowVX) / arrowAX; }
         }
-	if (newX <= (leftB + myBallRadius))
+	if (newX <= (leftB + arrowLengthBy2))
         {   /* Ball hits left */
-            if (myBallAX == 0) { tempT = ((leftB + myBallRadius) - myBallX) / myBallVX; }
-            else { tempT = ((-myBallVX) - Math.sqrt(myBallVX * myBallVX + 2 * myBallAX * ((leftB + myBallRadius) - myBallX))) / myBallAX; }
+            if (arrowAX == 0) { tempT = ((leftB + arrowLengthBy2) - arrowX) / arrowVX; }
+            else { tempT = ((-arrowVX) - Math.sqrt(arrowVX * arrowVX + 2 * arrowAX * ((leftB + arrowLengthBy2) - arrowX))) / arrowAX; }
         }
 	if (tempT == boundaryT) { changeX = -1; }
 	if (tempT < boundaryT)  { changeX = -1; changeY = 1; boundaryT = tempT }
     }
-    newY = myBallY + myBallVY * boundaryT + 0.5 * myBallAY * boundaryT * boundaryT;
-    if ((newY >= (topB - myBallRadius)) || (newY <= (bottomB + myBallRadius)))
+    newY = arrowY + arrowVY * boundaryT + 0.5 * arrowAY * boundaryT * boundaryT;
+    if ((newY >= (topB - arrowHeightBy2)) || (newY <= (bottomB + arrowHeightBy2)))
     {   /* Y boundary violated */
-	if (newY >= (topB - myBallRadius))
+	if (newY >= (topB - arrowHeightBy2))
         {   /* Ball hits top */
-            if (myBallAY == 0) { tempT = ((topB - myBallRadius) - myBallY) / myBallVY; }
-            else { tempT = (Math.sqrt(myBallVY * myBallVY + 2 * myBallAY * ((topB - myBallRadius) - myBallY)) - myBallVY) / myBallAY; }
+            if (arrowAY == 0) { tempT = ((topB - arrowHeightBy2) - arrowY) / arrowVY; }
+            else { tempT = (Math.sqrt(arrowVY * arrowVY + 2 * arrowAY * ((topB - arrowHeightBy2) - arrowY)) - arrowVY) / arrowAY; }
         }
-	if (newY <= (bottomB + myBallRadius))
+	if (newY <= (bottomB + arrowHeightBy2))
         {   /* Ball hits bottom */
-            if (myBallAY == 0) { tempT = ((bottomB + myBallRadius) - myBallY) / myBallVY; }
-            else { tempT = ((-myBallVY) - Math.sqrt(myBallVY * myBallVY + 2 * myBallAY * ((bottomB + myBallRadius) - myBallY))) / myBallAY; }
+            if (arrowAY == 0) { tempT = ((bottomB + arrowHeightBy2) - arrowY) / arrowVY; }
+            else { tempT = ((-arrowVY) - Math.sqrt(arrowVY * arrowVY + 2 * arrowAY * ((bottomB + arrowHeightBy2) - arrowY))) / arrowAY; }
         }
 	if (tempT == boundaryT) { changeY = -1; }
 	if (tempT < boundaryT)  { changeY = -1; changeX = 1; boundaryT = tempT }
@@ -643,43 +488,43 @@ var tempT;          /* Temporary time */
     /* Finally Change in direction boundary Event for velocity */
     if ((changeX == 1) && (changeY == 1))
     {   /* Check only if no barrier is crossed */
-        newVX = (myBallVX + myBallAX * boundaryT);
-        if ((newVX * myBallVX) < 0)
+        newVX = (arrowVX + arrowAX * boundaryT);
+        if ((newVX * arrowVX) < 0)
         {   /* X velocity changed direction */
-	    tempT = (-myBallVX) / myBallAX;
+	    tempT = (-arrowVX) / arrowAX;
 	    if (tempT < boundaryT)  { boundaryT = tempT }
         }
-        newVY = (myBallVY + myBallAY * boundaryT);
-        if ((newVY * myBallVY) < 0)
+        newVY = (arrowVY + arrowAY * boundaryT);
+        if ((newVY * arrowVY) < 0)
         {   /* Y velocity changed direction */
-	    tempT = (-myBallVY) / myBallAY;
+	    tempT = (-arrowVY) / arrowAY;
 	    if (tempT < boundaryT)  { boundaryT = tempT }
         }
     }
 
     /* Recompute Position, Velocity, Acceleration using boundaryT */
-    myBallX  = (myBallX + myBallVX * boundaryT + 0.5 * myBallAX * boundaryT * boundaryT);
-    myBallY  = (myBallY + myBallVY * boundaryT + 0.5 * myBallAY * boundaryT * boundaryT);
+    arrowX  = (arrowX + arrowVX * boundaryT + 0.5 * arrowAX * boundaryT * boundaryT);
+    arrowY  = (arrowY + arrowVY * boundaryT + 0.5 * arrowAY * boundaryT * boundaryT);
     if(changeX!=-1)
-    myBallVX = (myBallVX + myBallAX * boundaryT) * changeX;
+    arrowVX = (arrowVX + arrowAX * boundaryT) * changeX;
+    else {
+        PIEstopAnimation();
+    }
     if(changeY!=-1)
-    myBallVY = (myBallVY + myBallAY * boundaryT) * changeY;
-    myBallAX = myBallAX;
-    myBallAY = myBallAY;
+    arrowVY = (arrowVY + arrowAY * boundaryT) * changeY;
+    else {
+        PIEstopAnimation();
+    }
 
     /* Set Ball position */
-    myBall.position.set(myBallX, myBallY, myBallZ);
+    arrow.position.set(arrowX, arrowY, arrowZ);
 
     /* Adjust Simulation time in case boundary event has occured */
     boundaryT *= 1000;
     if (boundaryT < dt) { PIEadjustAnimationTime(dt - boundaryT); }
 
     /* Finally Update the Display Panel with new values */
-    PIEchangeDisplayText(PosX, myBallX);
-    PIEchangeDisplayText(PosY, myBallY);
-    PIEchangeDisplayText(VelX, myBallVX);
-    PIEchangeDisplayText(VelY, myBallVY);
-    PIEchangeDisplayText(AccY, myBallAY);
+
 }
 
 /******************* Update (animation changes) code ***********************/
