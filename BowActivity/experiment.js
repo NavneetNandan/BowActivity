@@ -92,7 +92,7 @@ function updateInitialVelocity() {
 
 function handleArrowMass(newValue){
     arrowMass=newValue;
-    arrow.scale.z=0.9+(newValue-4)/20;
+    arrow.scale.z=1.5+2*(newValue-4)/40;
     PIErender();
 }
 
@@ -166,7 +166,7 @@ function initialiseOtherVariables()
 {
     /* Initialise variables */
     myBallRadius = 0.6;
-    wallThickness = 0.20;
+    wallThickness =  0.20;
 
     /* Gravity */
     gravityX = 0.0;
@@ -269,10 +269,10 @@ var texture;
     PIErenderer.domElement.addEventListener("mouseup", resetstretch, false);
     loader.load("https://raw.githubusercontent.com/NavneetNandan/BowActivity/master/BowActivity/sun-dial-arrow.json",function (obj) {
         arrow=obj.children[0];
-        // arrow.material.color.setHex(0x5a5a5a);
+        arrow.material.color.setHex(0x4E342E);
         arrow.scale.x = 0.6;
         arrow.scale.y = 0.6;
-        arrow.scale.z = 0.9;
+        arrow.scale.z = 1.5;
         arrow.position.set(1.4,arrowY,arrowZ);
         arrow.rotation.x= Math.PI/2 ;
         // obj.rotation.y= Math.PI / 4;
@@ -282,13 +282,20 @@ var texture;
         PIEsetDrag(arrow, myArrowDrag);
         PIErender();
     });
-    var img = new THREE.MeshLambertMaterial({
-        map:THREE.ImageUtils.loadTexture('rinG8A7qT.gif')
-    });
-    var geometry=new THREE.BoxGeometry(20,20,50);
-    var box=new THREE.Mesh(geometry,img);
-    box.position.set(arrowX,arrowY,arrowZ);
-    PIEaddElement(box);
+    var geometry_cube = new THREE.BoxGeometry(0.03, 1.5, 1.5);
+    var material_cube = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture('rinG8A7qT.gif')});
+    var cube = new THREE.Mesh(geometry_cube, material_cube);
+    cube.position.set(6,1.1,-2);
+    cube.castShadow = false;
+    cube.receiveShadow = false;
+    PIEaddElement(cube);
+    // var img = new THREE.MeshLambertMaterial({
+    //     map:THREE.ImageUtils.loadTexture('rinG8A7qT.gif')
+    // });
+    // var geometry=new THREE.BoxGeometry(20,20,50);
+    // var box=new THREE.Mesh(geometry,img);
+    // box.position.set(arrowX,arrowY,arrowZ);
+    // PIEaddElement(box);
     /* Create Ball and add it to scene */
     // arrow = new THREE.Mesh(new THREE.SphereGeometry(myBallRadius, 32, 32), new THREE.MeshLambertMaterial({color:0xededed}));
     // arrow.position.set(arrowX, arrowY, myBallZ);
@@ -309,7 +316,7 @@ var texture;
     // material = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture } );
     // geometry = new THREE.PlaneBufferGeometry( mySceneW * 2, backB * 2 );
     geometry = new THREE.BoxGeometry( mySceneW * 2, wallThickness, 100);
-    material = new THREE.MeshLambertMaterial( {color: 0x101010} );
+    material = new THREE.MeshLambertMaterial( {color: 0x263238} );
     myFloor  = new THREE.Mesh( geometry, material );
     // myFloor.lookAt(new THREE.Vector3(0,1,0));
     myFloor.position.set(myCenterX, bottomB - (wallThickness / 2), 0.0);
@@ -317,21 +324,21 @@ var texture;
     PIEaddElement(myFloor);
     /* Ceiling */
     geometry = new THREE.BoxGeometry( mySceneW * 2, wallThickness, 100 );
-    material = new THREE.MeshLambertMaterial( {color: 0xeeeeee} );
+    material = new THREE.MeshLambertMaterial( {color: 0x37474F} );
     myCeiling = new THREE.Mesh( geometry, material );
     myCeiling.position.set(myCenterX, topB+(wallThickness/2), 0.0);
     myFloor.receiveShadow = true;
     PIEaddElement(myCeiling);
     /* Left */
     geometry = new THREE.BoxGeometry( wallThickness, mySceneH * 2, 100 );
-    material = new THREE.MeshLambertMaterial( {color: 0xaa0000} );
+    material = new THREE.MeshLambertMaterial( {color: 0x202020} );
     myLeft = new THREE.Mesh( geometry, material );
-    myLeft.position.set(leftB-(wallThickness/2), myCenterY, 0.0);
+    myLeft.position.set(leftB-(wallThickness), myCenterY, 0.0);
     myLeft.receiveShadow = true;
     PIEaddElement(myLeft);
     /* Right */
     geometry = new THREE.BoxGeometry( wallThickness, mySceneH * 2, 100 );
-    material = new THREE.MeshLambertMaterial( {color: 0xaa0000} );
+    material = new THREE.MeshLambertMaterial( {color: 0x202020} );
     myRight = new THREE.Mesh( geometry, material );
     myRight.position.set(rightB+(wallThickness/2), myCenterY, 0.0);
     myRight.receiveShadow = true;
@@ -340,7 +347,7 @@ var texture;
     // material = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture } );
     // geometry = new THREE.PlaneBufferGeometry( mySceneW * 2, mySceneH * 2 );
     geometry = new THREE.BoxGeometry( mySceneW * 2, mySceneH * 2, wallThickness );
-    material = new THREE.MeshLambertMaterial( {color: 0x0000ff} );
+    material = new THREE.MeshLambertMaterial( {color: 0xFAFAFA} );
     myBack = new THREE.Mesh( geometry, material );
     myBack.position.set(myCenterX, myCenterY, backB - (wallThickness / 2));
     myBack.receiveShadow = true;
@@ -391,7 +398,7 @@ function resetExperiment()
     /* Reset Ball position */
     // arrow.position.set(arrowX, arrowY, myBallZ);
     lineMaterial = new THREE.MeshBasicMaterial({
-        color: 0x00ff00
+        color: 0x0e0e0e,
     });
     geometry = new THREE.Geometry();
     if(inArray(line,PIEsceneElements)){
@@ -459,7 +466,7 @@ var tempT;          /* Temporary time */
     arrowY = arrow.position.y;
     arrowZ = arrow.position.z;
     var arrowLengthBy2=0.75;
-    var arrowHeightBy2=0.1;
+    var arrowHeightBy2=0.2;
     /* Intialise for boundary detection */
     changeX   = 1;
     changeY   = 1;
