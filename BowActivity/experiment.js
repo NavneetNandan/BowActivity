@@ -58,12 +58,12 @@ function myArrowDrag(element, newpos)
     var geometry1=new THREE.Geometry();
     geometry1.vertices.push(new THREE.Vector3(1-0.1,0.7,arrowZ));
     geometry1.vertices.push(new THREE.Vector3(newpos.x-0.65,1.5,arrowZ));
-    geometry1.vertices.push(new THREE.Vector3(1-0.1,2.3,arrowZ));
+    geometry1.vertices.push(new THREE.Vector3(0.9,2.3,arrowZ));
     line = new THREE.Line(geometry1, lineMaterial);
     // PIErender();
     arrowX = newpos.x;
     // console.log(newpos.x);
-    if (newpos.x < 1.14) { arrowX = 1.14;geometry1.vertices[1].x=1.14-0.65}
+    if (newpos.x < 0.9) { arrowX = 0.9;geometry1.vertices[1].x=0.9-0.65}
 
     else if (newpos.x > 1.4) { arrowX = 1.4;geometry1.vertices[1].x=1.4-0.65 }
     updateInitialVelocity();
@@ -81,7 +81,7 @@ function inArray(value, array) {
 }
 
 function updateInitialVelocity() {
-    scaled_x = ((1.4 - arrowX) / 0.26) * 10;
+    scaled_x = ((1.4 - arrowX) / 0.5) * 10;
     // console.log(7+scaled_x*1.5);
     var newVelocity = (7 + scaled_x * 1.5) / (arrowMass / 4);
     handleVX(newVelocity);
@@ -92,7 +92,7 @@ function updateInitialVelocity() {
 
 function handleArrowMass(newValue){
     arrowMass=newValue;
-    arrow.scale.z=0.9+(newValue-4)/40;
+    arrow.scale.z=0.9+(newValue-4)/20;
     PIErender();
 }
 
@@ -181,6 +181,7 @@ function initialiseOtherVariables()
 
 function resetstretch() {
     if(stretched) {
+        PIEdragElements.pop();
         PIEstartAnimation();
         PIEscene.remove(line);
         var geometry1=new THREE.Geometry();
@@ -228,6 +229,7 @@ function resetstretch() {
  * <p>
  * The developer should code and assign proper event handlers to the elements (to control animation).
  */
+
 function loadExperimentElements()
 {
     arrowMass=4
@@ -250,7 +252,7 @@ var texture;
 
     /* initialise Other Variables */
     initialiseOtherVariables();
-    loader.load("https://github.com/NavneetNandan/BowActivity/raw/master/BowActivity/sg-bow-1.json",function (obj) {
+    loader.load("https://raw.githubusercontent.com/NavneetNandan/BowActivity/master/BowActivity/sg-bow-1.json",function (obj) {
         bow=obj;
         bow.scale.x = 0.0009;
         bow.scale.y = 0.0009;
@@ -280,6 +282,13 @@ var texture;
         PIEsetDrag(arrow, myArrowDrag);
         PIErender();
     });
+    var img = new THREE.MeshLambertMaterial({
+        map:THREE.ImageUtils.loadTexture('rinG8A7qT.gif')
+    });
+    var geometry=new THREE.BoxGeometry(20,20,50);
+    var box=new THREE.Mesh(geometry,img);
+    box.position.set(arrowX,arrowY,arrowZ);
+    PIEaddElement(box);
     /* Create Ball and add it to scene */
     // arrow = new THREE.Mesh(new THREE.SphereGeometry(myBallRadius, 32, 32), new THREE.MeshLambertMaterial({color:0xededed}));
     // arrow.position.set(arrowX, arrowY, myBallZ);
@@ -365,6 +374,10 @@ function resetExperiment()
 {
     /* initialise Other Variables */
     initialiseOtherVariables();
+    if(arrow!=null){
+    PIEdragElement(arrow);
+    PIEsetDrag(arrow,myArrowDrag);
+    }
     stretched=false;
     /* Initialise Ball variables */
     arrowX      = myCenterX;
