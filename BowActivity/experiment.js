@@ -113,7 +113,7 @@ function initialiseControls()
 {
     initialiseControlVariables();
     /* Create Input Panel */
-    PIEaddInputSlider("Mass", 4, handleArrowMass, 4, 20, 4);
+    PIEaddInputSlider("Mass", 4, handleArrowMass, 4, 20, 1);
     /* Create Display Panel */
     PIEaddDisplayText("Mass", 4);
 }
@@ -316,7 +316,7 @@ var texture;
     // material = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture } );
     // geometry = new THREE.PlaneBufferGeometry( mySceneW * 2, backB * 2 );
     geometry = new THREE.BoxGeometry( mySceneW * 2, wallThickness, 100);
-    material = new THREE.MeshLambertMaterial( {color: 0x263238} );
+    material = new THREE.MeshLambertMaterial( {color: 0x4E342E} );
     myFloor  = new THREE.Mesh( geometry, material );
     // myFloor.lookAt(new THREE.Vector3(0,1,0));
     myFloor.position.set(myCenterX, bottomB - (wallThickness / 2), 0.0);
@@ -324,21 +324,21 @@ var texture;
     PIEaddElement(myFloor);
     /* Ceiling */
     geometry = new THREE.BoxGeometry( mySceneW * 2, wallThickness, 100 );
-    material = new THREE.MeshLambertMaterial( {color: 0x37474F} );
+    material = new THREE.MeshLambertMaterial( {color: 0x2196F3} );
     myCeiling = new THREE.Mesh( geometry, material );
     myCeiling.position.set(myCenterX, topB+(wallThickness/2), 0.0);
     myFloor.receiveShadow = true;
     PIEaddElement(myCeiling);
     /* Left */
     geometry = new THREE.BoxGeometry( wallThickness, mySceneH * 2, 100 );
-    material = new THREE.MeshLambertMaterial( {color: 0x202020} );
+    material = new THREE.MeshLambertMaterial( {color: 0x4CAF50} );
     myLeft = new THREE.Mesh( geometry, material );
     myLeft.position.set(leftB-(wallThickness), myCenterY, 0.0);
     myLeft.receiveShadow = true;
     PIEaddElement(myLeft);
     /* Right */
     geometry = new THREE.BoxGeometry( wallThickness, mySceneH * 2, 100 );
-    material = new THREE.MeshLambertMaterial( {color: 0x202020} );
+    material = new THREE.MeshLambertMaterial( {color: 0x4CAF50} );
     myRight = new THREE.Mesh( geometry, material );
     myRight.position.set(rightB+(wallThickness/2), myCenterY, 0.0);
     myRight.receiveShadow = true;
@@ -347,7 +347,7 @@ var texture;
     // material = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture } );
     // geometry = new THREE.PlaneBufferGeometry( mySceneW * 2, mySceneH * 2 );
     geometry = new THREE.BoxGeometry( mySceneW * 2, mySceneH * 2, wallThickness );
-    material = new THREE.MeshLambertMaterial( {color: 0xFAFAFA} );
+    material = new THREE.MeshLambertMaterial( {color: 0x4CAF50} );
     myBack = new THREE.Mesh( geometry, material );
     myBack.position.set(myCenterX, myCenterY, backB - (wallThickness / 2));
     myBack.receiveShadow = true;
